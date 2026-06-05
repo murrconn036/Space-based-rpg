@@ -107,26 +107,21 @@ public class RPG {
             System.out.println("Could not clear terminal");
         }
         // Prints the opening story and options for the user to select //
-        String print = "You awake in a strange room, alone and surrounded by flashing red lights. An automated voice repeats “SYSTEM FAILURE. LOSS OF CREW DETECTED.” Then, the lights go out, and the room turns black. You awake again, this time in a room with white, fluorescent lights, and a constant background hum. You slowly rise to your feet, a wave of dizziness striking your head. You have no memory of the past, and have no clue where you are. As you begin to explore your surroundings, you find the bodies of your crew laying on the floor. They have facial expressions of horror, but no scratches or marks on their bodies. You then find a window, and realize that you are not on Earth."; 
+        String print = "You awake in a strange room, alone and surrounded by flashing red lights. An automated voice repeats “SYSTEM FAILURE. LOSS OF CREW DETECTED.” Then, the lights go out, and the room turns black. You awake again, this time in a room with white, fluorescent lights, and a constant background hum. You slowly rise to your feet, a wave of dizziness striking your head. You have no memory of the past, and have no clue where you are. As you begin to explore your surroundings, you find the bodies of your crew laying on the floor. They have facial expressions of horror, but no scratches or marks on their bodies. You then find a window, and realize that you are not on Earth.\n"; 
         printText(print);
-        System.out.println("");
-        String print2 = "Select an option:"; 
+        String print2 = "Select an option:\n"; 
         printText(print2);
-        System.out.println("");
-        String option1 = "1. Explore your surroundings";
+        String option1 = "1. Explore your surroundings\n";
         printText(option1);
-        System.out.println("");
-        String option2 = "2. Open the airlock";
+        String option2 = "2. Open the airlock\n";
         printText(option2);
-        System.out.println("");
-        String option3 = "3. Move to the next room";
+        String option3 = "3. Move to the next room\n";
         printText(option3);
-        System.out.println("");
-        String option4 = "4. Save and quit";
+        String option4 = "4. Save and quit\n";
         printText(option4);
-        System.out.println("");
 
         int choice = input.nextInt(); 
+        
     }
 
     
@@ -145,4 +140,7 @@ public class RPG {
             }
         }
     }
+
+
+
 }

@@ -6,4 +6,8 @@ public class PlayerClass {
         this.healthPoints = healthPoints; 
         
     }
+
+    public int getHealthPoints(){
+        return this.healthPoints; 
+    }
 }
