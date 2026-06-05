@@ -99,13 +99,14 @@ public class RPG {
     }
 
     public static void Introduction(PlayerClass player){
+        Scanner input = new Scanner(System.in);
         // Clears the text from the terminal // 
         try {
             new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
         } catch (IOException | InterruptedException e) {
             System.out.println("Could not clear terminal");
         }
-        // Prints the opening story //
+        // Prints the opening story and options for the user to select //
         String print = "You awake in a strange room, alone and surrounded by flashing red lights. An automated voice repeats “SYSTEM FAILURE. LOSS OF CREW DETECTED.” Then, the lights go out, and the room turns black. You awake again, this time in a room with white, fluorescent lights, and a constant background hum. You slowly rise to your feet, a wave of dizziness striking your head. You have no memory of the past, and have no clue where you are. As you begin to explore your surroundings, you find the bodies of your crew laying on the floor. They have facial expressions of horror, but no scratches or marks on their bodies. You then find a window, and realize that you are not on Earth."; 
         printText(print);
         System.out.println("");
@@ -114,10 +115,21 @@ public class RPG {
         System.out.println("");
         String option1 = "1. Explore your surroundings";
         printText(option1);
-        String option2 = "2. ";
-        String option3 = "";
-        String option4 = "";
+        System.out.println("");
+        String option2 = "2. Open the airlock";
+        printText(option2);
+        System.out.println("");
+        String option3 = "3. Move to the next room";
+        printText(option3);
+        System.out.println("");
+        String option4 = "4. Save and quit";
+        printText(option4);
+        System.out.println("");
+
+        int choice = input.nextInt(); 
     }
+
+    
 
     public static void printText(String print){
         for (int i = 0; i < print.length(); i++) {
