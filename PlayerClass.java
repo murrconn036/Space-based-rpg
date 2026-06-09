@@ -2,19 +2,42 @@ import java.util.*;
 
 public class PlayerClass {
     private String playerName;  
-    public int healthPoints; 
-    private ArrayList<ObjectClass> inventory; 
-    public PlayerClass(String playerName, int healthPoints){
+    private double healthPoints;  
+    private int levelNumber;
+    private ArrayList<ObjectClass> inventory = new ArrayList<>();
+    public PlayerClass(String playerName, double healthPoints, int levelNumber){
         this.playerName = playerName;  
         this.healthPoints = healthPoints; 
-        
+        this.levelNumber = levelNumber; 
     }
 
-    public int getHealthPoints(){
+    public double getHealthPoints(){
         return this.healthPoints; 
     } 
 
-    public void setHealthPoints(int amount){
+    public int getLevelNum(){
+        return this.levelNumber; 
+    }
+
+    public void setLevelNum(int levelNum){
+        this.levelNumber = levelNum; 
+    }
+
+    public void setHealthPoints(double amount){
         this.healthPoints = amount; 
+    }
+
+    public void addItem(ObjectClass item){
+        inventory.add(item);
+    }
+
+    public String getSaveData(){
+        String saveData = this.playerName + "," + this.healthPoints + "," + this.levelNumber; 
+        return saveData; 
+    }
+
+    public String getInventoryData(){
+        String inventoryData = inventory.toString();
+        return inventoryData; 
     }
 }

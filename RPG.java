@@ -3,6 +3,8 @@ import java.util.*;
 
 
 public class RPG {
+    static File saveFile; 
+    static File inventoryFile;
     public static void main(String[] args) throws IOException {
         try {
             startGame(false, 0);
@@ -28,14 +30,11 @@ public class RPG {
             System.out.println("Enter your save name: ");
             String saveName = input.next(); 
             // Creates a new file object in the save_files folder with the inputted file name in CSV format // 
-            File saveFile = new File("save_files\\" + saveName + ".csv");
+            saveFile = new File("save_files\\" + saveName + ".csv"); 
+            inventoryFile = new File("save_files\\" + saveName + "inventory.csv"); 
             // If the file doesn't already exist, creates the new file and delays for 200 milliseconds //
-            if (saveFile.createNewFile()) {
+            if (saveFile.createNewFile() && inventoryFile.createNewFile()) {
                 System.out.println("File Created!");
-                try {
-                    Thread.sleep(200);
-                } catch (InterruptedException e) {
-                }
             } 
             // if the file already exists, prompts the user with further instructions // 
             else {
@@ -59,8 +58,8 @@ public class RPG {
                     }
                 } while (!isInputted2);
             }
-            PlayerClass player = new PlayerClass(playerName, 100);
-            Introduction(player);
+            PlayerClass player = new PlayerClass(playerName, 100, 1);
+            checkLevelNum(player);
         } 
         // If the user selects b and hasn't inputted anything else, runs the code to load an existing save file // 
         else if (newSave.equalsIgnoreCase("b") || iterations == 0){
@@ -68,22 +67,28 @@ public class RPG {
             boolean isInputted = false; 
             System.out.println("File name: "); 
             String saveName = input.next(); 
-            File saveFile = new File("save_files\\" + saveName + ".csv");
+            saveFile = new File("save_files\\" + saveName + ".csv");
+            inventoryFile = new File("save_files\\" + saveName + "inventory.csv"); 
             String playerName;
-            int playerHealth;
+            double playerHealth;
+            int levelNum; 
             try (Scanner fileReader = new Scanner(saveFile)) {
                 fileReader.useDelimiter(",");
                 playerName = "";
-                playerHealth = 0;
+                playerHealth = 0.0;
+                levelNum = 0; 
                 while (fileReader.hasNext()){
                     playerName = fileReader.next(); 
+                    if (fileReader.hasNextDouble()){
+                        playerHealth = fileReader.nextDouble();
+                    }
                     if (fileReader.hasNextInt()){
-                        playerHealth = fileReader.nextInt();
+                        levelNum = fileReader.nextInt();
                     }
                 }
-                PlayerClass player = new PlayerClass(playerName, playerHealth); 
+                PlayerClass player = new PlayerClass(playerName, playerHealth, levelNum); 
                 isInputted = true; 
-                Introduction(player);
+                checkLevelNum(player);
             } catch (FileNotFoundException e){
                 System.out.println("File not found, please try again"); 
                 startGame(true, 0);
@@ -106,7 +111,8 @@ public class RPG {
         } catch (IOException | InterruptedException e) {
             System.out.println("Could not clear terminal");
         }
-        // Prints the opening story and options for the user to select //
+        // Prints the opening story and options for the user to select, also incrementing the level counter //
+        player.setLevelNum(1);
         String print = "You awake in a strange room, alone and surrounded by flashing red lights. An automated voice repeats “SYSTEM FAILURE. LOSS OF CREW DETECTED.” Then, the lights go out, and the room turns black. You awake again, this time in a room with white, fluorescent lights, and a constant background hum. You slowly rise to your feet, a wave of dizziness striking your head. You have no memory of the past, and have no clue where you are. As you begin to explore your surroundings, you find the bodies of your crew laying on the floor. They have facial expressions of horror, but no scratches or marks on their bodies. You then find a window, and realize that you are not on Earth.\n"; 
         printText(print);
         String print2 = "Select an option:\n"; 
@@ -119,6 +125,7 @@ public class RPG {
         printText(option3);
         String option4 = "4. Save your game\n";
         printText(option4);
+        // calls the next part of the story // 
         story1(player); 
 
         
@@ -161,6 +168,10 @@ public class RPG {
                     isInputted = true; 
                     break; 
                 case 4: 
+                    try {
+                        saveGame(player); 
+                    } catch (IOException e) {
+                    }
                     isInputted = true;
                     break; 
                 default:
@@ -201,7 +212,36 @@ public class RPG {
         }
     }
 
-    public static void saveGame(){
+    public static void saveGame(PlayerClass player) throws IOException{
+        Scanner input = new Scanner(System.in);
+        FileWriter saveData = new FileWriter(saveFile); 
+        FileWriter saveInventory = new FileWriter(inventoryFile); 
+        saveData.write(player.getSaveData());
+        saveInventory.write(player.getInventoryData()); 
+        saveData.close(); 
+        saveInventory.close();
+        printText("Save Complete! Continue playing or quit? (a/b)");
+        String userInput = input.next(); 
+        switch (userInput) {
+            case "a":
+                checkLevelNum(player);
+                break; 
+            case "b": 
+                printText("Goodbye!"); 
+                break; 
+            default:
+                throw new AssertionError();
+        }
+    }
 
+    public static void checkLevelNum(PlayerClass player){
+        switch (player.getLevelNum()) {
+            case 1:
+                Introduction(player); 
+                break;
+            case 2: 
+                story1(player); 
+                break; 
+        }
     }
 }

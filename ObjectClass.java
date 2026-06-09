@@ -1,7 +1,11 @@
-public abstract class ObjectClass {
+public class ObjectClass {
     int objectIntegrity; 
-    String objectName; 
 
-    public abstract int getObjectIntegrity(); 
-    public abstract String getObjectName(); 
+    public ObjectClass(){
+        
+    } 
+
+    public ObjectClass(int objectIntegrity){
+        this.objectIntegrity = objectIntegrity; 
+    }
 }
