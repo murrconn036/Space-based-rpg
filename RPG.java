@@ -117,14 +117,12 @@ public class RPG {
         printText(option2);
         String option3 = "3. Move to the next room\n";
         printText(option3);
-        String option4 = "4. Save and quit\n";
+        String option4 = "4. Save your game\n";
         printText(option4);
+        story1(player); 
 
-        int choice = input.nextInt(); 
         
     }
-
-    
 
     public static void printText(String print){
         for (int i = 0; i < print.length(); i++) {
@@ -141,6 +139,69 @@ public class RPG {
         }
     }
 
+    public static void story1(PlayerClass player){
+        Scanner input = new Scanner(System.in);
+        boolean isInputted = false;
+        while (!isInputted) { 
+            int userOption = input.nextInt(); 
+            switch (userOption) {
+                case 1:
+                    String print1 = "Exploring your surroundings, you find things scattered all over the floor. One of these things is a hammer, so you pick it up.\n"; 
+                    // adds item to inventory // 
+                    printText(print1);
+                    isInputted = true;
+                    break;
+                case 2: 
+                    String print2 = "You step into the airlock and close the door behind you. You depressurize the airlock and are immediately killed. You forgot to put on a space suit.\n"; 
+                    printText(print2); 
+                    endGame();
+                    isInputted = true; 
+                    break; 
+                case 3: 
+                    isInputted = true; 
+                    break; 
+                case 4: 
+                    isInputted = true;
+                    break; 
+                default:
+                    System.out.println("Please select a number between 1-4");
+                    break; 
+            } 
+        }
+    }
 
+    public static void endGame(){
+        Scanner input = new Scanner(System.in); 
+        String print = "Game over! Start a new game, load a save, or quit? (a/b/c)"; 
+        printText(print);
+        String choice = input.next(); 
+        switch (choice) {
+            case "a":
+                try {
+                    startGame(true, 1);
+                } catch (IOException e) {
+                    System.out.println("An error has occurred.");
+                    break; 
+                }
+                break;
+            case "b": 
+                try {
+                    startGame(true, 0);
+                } catch (IOException e) {
+                    System.out.println("An error has occurred.");
+                    break; 
+                }
+                break;
+            case "c": 
+                System.out.println("Goodbye!");
+                break; 
+            default:
+                System.out.println("Please enter a, b, or c (lowercase)");
+                endGame(); 
+        }
+    }
 
+    public static void saveGame(){
+
+    }
 }
