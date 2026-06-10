@@ -156,6 +156,14 @@ public class RPG {
                     String print1 = "Exploring your surroundings, you find things scattered all over the floor. One of these things is a hammer, so you pick it up.\n"; 
                     // adds item to inventory // 
                     printText(print1);
+                    HammerObject hammer = new HammerObject(100, "Hammer"); 
+                    player.addItem(hammer);
+                    printText("Hammer added to your inventory"); 
+                    try {
+                        saveGame(player);
+                    } catch (IOException e) {
+
+                    }
                     isInputted = true;
                     break;
                 case 2: 
@@ -171,6 +179,7 @@ public class RPG {
                     try {
                         saveGame(player); 
                     } catch (IOException e) {
+                        System.err.println("An error has occurred.");
                     }
                     isInputted = true;
                     break; 
@@ -216,8 +225,15 @@ public class RPG {
         Scanner input = new Scanner(System.in);
         FileWriter saveData = new FileWriter(saveFile); 
         FileWriter saveInventory = new FileWriter(inventoryFile); 
+        LinkedHashMap<String, Integer> inventoryData = new LinkedHashMap<>(); 
+        for (int i = 0; i < player.getInventoryData().size(); i++) {
+            String temp = player.getInventoryData().get(i).getObjectName();
+            inventoryData.put(temp, player.getInventoryData().get(i).getObjectIntegrity());
+            saveInventory.write(temp); 
+            saveInventory.write(",");
+            saveInventory.write(inventoryData.get(temp));
+        } 
         saveData.write(player.getSaveData());
-        saveInventory.write(player.getInventoryData()); 
         saveData.close(); 
         saveInventory.close();
         printText("Save Complete! Continue playing or quit? (a/b)");
@@ -229,8 +245,6 @@ public class RPG {
             case "b": 
                 printText("Goodbye!"); 
                 break; 
-            default:
-                throw new AssertionError();
         }
     }
 

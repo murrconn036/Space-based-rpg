@@ -36,8 +36,7 @@ public class PlayerClass {
         return saveData; 
     }
 
-    public String getInventoryData(){
-        String inventoryData = inventory.toString();
-        return inventoryData; 
+    public ArrayList<ObjectClass> getInventoryData(){
+        return this.inventory; 
     }
 }
