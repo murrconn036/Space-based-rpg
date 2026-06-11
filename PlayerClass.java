@@ -1,14 +1,16 @@
 import java.util.*;
 
 public class PlayerClass {
-    private String playerName;  
+    private final String playerName;  
     private double healthPoints;  
-    private int levelNumber;
+    private int levelNumber; 
+    private int lastUserSelection; 
     private ArrayList<ObjectClass> inventory = new ArrayList<>();
-    public PlayerClass(String playerName, double healthPoints, int levelNumber){
+    public PlayerClass(String playerName, double healthPoints, int levelNumber, int lastUserSelection){
         this.playerName = playerName;  
         this.healthPoints = healthPoints; 
         this.levelNumber = levelNumber; 
+        this.lastUserSelection = lastUserSelection; 
     }
 
     public double getHealthPoints(){
@@ -17,10 +19,18 @@ public class PlayerClass {
 
     public int getLevelNum(){
         return this.levelNumber; 
+    } 
+
+    public int getLastUserSelection(){
+        return lastUserSelection; 
     }
 
     public void setLevelNum(int levelNum){
         this.levelNumber = levelNum; 
+    }
+
+    public void setLastUserSelection(int lastUserSelection){
+        this.lastUserSelection = lastUserSelection; 
     }
 
     public void setHealthPoints(double amount){
@@ -32,7 +42,7 @@ public class PlayerClass {
     }
 
     public String getSaveData(){
-        String saveData = this.playerName + "," + this.healthPoints + "," + this.levelNumber; 
+        String saveData = this.playerName + "," + this.healthPoints + "," + this.levelNumber + "," + this.lastUserSelection; 
         return saveData; 
     }
 

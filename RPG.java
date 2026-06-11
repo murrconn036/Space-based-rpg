@@ -25,9 +25,9 @@ public class RPG {
         } 
         // if the user selects a and hasn't inputted anything else, runs the code to create a new save file //
         if (newSave.equalsIgnoreCase("a") || iterations > 0) { 
-            System.out.println("Enter your player name: ");
+            System.out.println("Enter your player name (No spaces): ");
             String playerName = input.next(); 
-            System.out.println("Enter your save name: ");
+            System.out.println("Enter your save name (No spaces): ");
             String saveName = input.next(); 
             // Creates a new file object in the save_files folder with the inputted file name in CSV format // 
             saveFile = new File("save_files\\" + saveName + ".csv"); 
@@ -58,7 +58,7 @@ public class RPG {
                     }
                 } while (!isInputted2);
             }
-            PlayerClass player = new PlayerClass(playerName, 100, 1);
+            PlayerClass player = new PlayerClass(playerName, 100, 0, 0);
             checkLevelNum(player);
         } 
         // If the user selects b and hasn't inputted anything else, runs the code to load an existing save file // 
@@ -67,48 +67,54 @@ public class RPG {
             boolean isInputted = false; 
             System.out.println("File name: "); 
             String saveName = input.next(); 
+            // Creates new file objects with the inputted file name //
             saveFile = new File("save_files\\" + saveName + ".csv");
             inventoryFile = new File("save_files\\" + saveName + "inventory.csv"); 
             String playerName;
             double playerHealth;
             int levelNum;  
+            int lastUserSelection; 
             try {
                 Scanner saveFileReader = new Scanner(saveFile); 
                 saveFileReader.useDelimiter(",");
                 playerName = "";
                 playerHealth = 0.0;
                 levelNum = 0; 
+                lastUserSelection = 0; 
                 while (saveFileReader.hasNext()){
                     playerName = saveFileReader.next(); 
                     if (saveFileReader.hasNextDouble()){
                         playerHealth = saveFileReader.nextDouble();
                     }
-                    if (saveFileReader.hasNextInt()){
+                    if (saveFileReader.hasNextInt() && saveFileReader.nextInt() > 0){
                         levelNum = saveFileReader.nextInt();
+                    } 
+                    else {
+                        lastUserSelection = saveFileReader.nextInt(); 
                     }
                 }
                 saveFileReader.close(); 
-                PlayerClass player = new PlayerClass(playerName, playerHealth, levelNum); 
+                PlayerClass player = new PlayerClass(playerName, playerHealth, levelNum, lastUserSelection); 
                 // Loads the save data for the player's inventory // 
                 Scanner inventoryFileReader = new Scanner(inventoryFile); 
                 inventoryFileReader.useDelimiter(","); 
                 String objectName = ""; 
                 int objectHealth = 0; 
                 while (inventoryFileReader.hasNext()) { 
-                    if (inventoryFileReader.hasNext()) {
+                    // if the next file input isn't an integer, set the object name to the input // 
+                    if (inventoryFileReader.hasNext() && !inventoryFileReader.hasNextInt()) {
                         objectName = inventoryFileReader.next(); 
                     } 
-                    else if (inventoryFileReader.hasNextInt()){
+                    else {
+                        // sets the object health if the input is an integer // 
                         objectHealth = inventoryFileReader.nextInt(); 
                     }
-
+                    // Checks the object name, then creates an object of that type // 
                     switch (objectName) {
                         case "Hammer":
                             HammerObject hammer = new HammerObject(objectHealth, objectName); 
                             player.addItem(hammer);
                             break;
-                        default:
-                            throw new AssertionError();
                     }
                 }
                 inventoryFileReader.close();
@@ -136,26 +142,26 @@ public class RPG {
             System.out.println("Could not clear terminal");
         }
         // Prints the opening story and options for the user to select, also incrementing the level counter //
-        player.setLevelNum(1);
+        player.setLevelNum(0);
         String print = "You awake in a strange room, alone and surrounded by flashing red lights. An automated voice repeats “SYSTEM FAILURE. LOSS OF CREW DETECTED.” Then, the lights go out, and the room turns black. You awake again, this time in a room with white, fluorescent lights, and a constant background hum. You slowly rise to your feet, a wave of dizziness striking your head. You have no memory of the past, and have no clue where you are. As you begin to explore your surroundings, you find the bodies of your crew laying on the floor. They have facial expressions of horror, but no scratches or marks on their bodies. You then find a window, and realize that you are not on Earth.\n"; 
-        printText(print);
+        printText(print, player);
         String print2 = "Select an option:\n"; 
-        printText(print2);
+        printText(print2, player);
         String option1 = "1. Explore your surroundings\n";
-        printText(option1);
+        printText(option1, player);
         String option2 = "2. Open the airlock\n";
-        printText(option2);
+        printText(option2, player);
         String option3 = "3. Move to the next room\n";
-        printText(option3);
+        printText(option3, player);
         String option4 = "4. Save your game\n";
-        printText(option4);
+        printText(option4, player);
         // calls the next part of the story // 
         story1(player); 
 
         
     }
 
-    public static void printText(String print){
+    public static void printText(String print, PlayerClass player){
         for (int i = 0; i < print.length(); i++) {
             System.out.print(print.charAt(i));
             // Delays the character printing by 50 milliseconds, and delays the end of sentences by 200 milliseconds // 
@@ -165,6 +171,11 @@ public class RPG {
                     Thread.sleep(200);
                 }
             } catch (InterruptedException e) {
+                    try {
+                        saveGame(player, "b");
+                    } catch (IOException a) {
+                        System.out.println("An error has occurred. Your game could not be saved");
+                    }
                 System.out.println("An error has occured. Your game has been saved");
             }
         }
@@ -173,35 +184,57 @@ public class RPG {
     public static void story1(PlayerClass player){
         Scanner input = new Scanner(System.in);
         boolean isInputted = false;
-        while (!isInputted) { 
-            int userOption = input.nextInt(); 
+        int userOption;  
+        switch (player.getLastUserSelection()) {
+            case -1:
+                userOption = 1; 
+                break;
+            case -2: 
+                userOption = 2;
+                break;  
+            case -3: 
+                userOption = 3; 
+                break; 
+            default:
+                userOption = input.nextInt();
+        }
+        while (!isInputted) {  
             switch (userOption) {
                 case 1:
                     String print1 = "Exploring your surroundings, you find things scattered all over the floor. One of these things is a hammer, so you pick it up.\n"; 
                     // adds item to inventory // 
-                    printText(print1);
-                    HammerObject hammer = new HammerObject(100, "Hammer"); 
-                    player.addItem(hammer);
-                    printText("Hammer added to your inventory"); 
-                    try {
-                        saveGame(player);
-                    } catch (IOException e) {
-
+                    printText(print1, player);
+                    if (player.getLastUserSelection() == 0) {
+                        HammerObject hammer = new HammerObject(100, "Hammer"); 
+                        player.addItem(hammer);
+                        printText("Hammer added to your inventory", player); 
+                        try {
+                            player.setLastUserSelection(-1);
+                            saveGame(player, "a");
+                        } catch (IOException e) {
+                            System.out.println("An error has occurred. Your game has not been saved.");
+                        }
+                    } 
+                    else {
+                        printText("Hammer already in your inventory", player);
                     }
+                    System.out.println("Autosaved!");
                     isInputted = true;
                     break;
                 case 2: 
                     String print2 = "You step into the airlock and close the door behind you. You depressurize the airlock and are immediately killed. You forgot to put on a space suit.\n"; 
-                    printText(print2); 
-                    endGame();
-                    isInputted = true; 
+                    printText(print2, player); 
+                    endGame(player);
+                    isInputted = true;
+                    player.setLastUserSelection(-2); 
                     break; 
                 case 3: 
+                    player.setLastUserSelection(-3);
                     isInputted = true; 
                     break; 
                 case 4: 
                     try {
-                        saveGame(player); 
+                        saveGame(player, "b"); 
                     } catch (IOException e) {
                         System.err.println("An error has occurred.");
                     }
@@ -214,10 +247,10 @@ public class RPG {
         }
     }
 
-    public static void endGame(){
+    public static void endGame(PlayerClass player){
         Scanner input = new Scanner(System.in); 
         String print = "Game over! Start a new game, load a save, or quit? (a/b/c)"; 
-        printText(print);
+        printText(print, player);
         String choice = input.next(); 
         switch (choice) {
             case "a":
@@ -241,11 +274,11 @@ public class RPG {
                 break; 
             default:
                 System.out.println("Please enter a, b, or c (lowercase)");
-                endGame(); 
+                endGame(player); 
         }
     }
 
-    public static void saveGame(PlayerClass player) throws IOException{
+    public static void saveGame(PlayerClass player, String userInput) throws IOException{
         Scanner input = new Scanner(System.in);
         FileWriter saveData = new FileWriter(saveFile); 
         FileWriter saveInventory = new FileWriter(inventoryFile); 
@@ -255,31 +288,32 @@ public class RPG {
             inventoryData.put(temp, player.getInventoryData().get(i).getObjectIntegrity());
             saveInventory.write(temp); 
             saveInventory.write(",");
-            // Work on tomorrow //
-            // saveInventory.write(inventoryData.get(temp));
+            saveInventory.write(inventoryData.get(temp).toString());
         } 
         saveData.write(player.getSaveData());
         saveData.close(); 
         saveInventory.close();
-        printText("Save Complete! Continue playing or quit? (a/b)");
-        String userInput = input.next(); 
-        switch (userInput) {
-            case "a":
-                checkLevelNum(player);
-                break; 
-            case "b": 
-                printText("Goodbye!"); 
-                break; 
+        if (userInput.isEmpty()){
+            printText("Save Complete! Continue playing or quit? (a/b)", player);
+            userInput = input.next(); 
+            switch (userInput) {
+                case "a":
+                    checkLevelNum(player);
+                    break; 
+                case "b": 
+                    printText("Goodbye!", player); 
+                    break; 
+            }
         }
     }
 
     public static void checkLevelNum(PlayerClass player){
         switch (player.getLevelNum()) {
-            case 1:
+            case 0:
                 Introduction(player); 
                 break;
-            case 2: 
-                story1(player); 
+            case 1: 
+                
                 break; 
         }
     }
