@@ -63,7 +63,7 @@ public class RPG {
         } 
         // If the user selects b and hasn't inputted anything else, runs the code to load an existing save file // 
         else if (newSave.equalsIgnoreCase("b") || iterations == 0){
-            // call the load existing save method // 
+            // Loads the save data for the player // 
             boolean isInputted = false; 
             System.out.println("File name: "); 
             String saveName = input.next(); 
@@ -71,29 +71,53 @@ public class RPG {
             inventoryFile = new File("save_files\\" + saveName + "inventory.csv"); 
             String playerName;
             double playerHealth;
-            int levelNum; 
-            try (Scanner fileReader = new Scanner(saveFile)) {
-                fileReader.useDelimiter(",");
+            int levelNum;  
+            try {
+                Scanner saveFileReader = new Scanner(saveFile); 
+                saveFileReader.useDelimiter(",");
                 playerName = "";
                 playerHealth = 0.0;
                 levelNum = 0; 
-                while (fileReader.hasNext()){
-                    playerName = fileReader.next(); 
-                    if (fileReader.hasNextDouble()){
-                        playerHealth = fileReader.nextDouble();
+                while (saveFileReader.hasNext()){
+                    playerName = saveFileReader.next(); 
+                    if (saveFileReader.hasNextDouble()){
+                        playerHealth = saveFileReader.nextDouble();
                     }
-                    if (fileReader.hasNextInt()){
-                        levelNum = fileReader.nextInt();
+                    if (saveFileReader.hasNextInt()){
+                        levelNum = saveFileReader.nextInt();
                     }
                 }
+                saveFileReader.close(); 
                 PlayerClass player = new PlayerClass(playerName, playerHealth, levelNum); 
+                // Loads the save data for the player's inventory // 
+                Scanner inventoryFileReader = new Scanner(inventoryFile); 
+                inventoryFileReader.useDelimiter(","); 
+                String objectName = ""; 
+                int objectHealth = 0; 
+                while (inventoryFileReader.hasNext()) { 
+                    if (inventoryFileReader.hasNext()) {
+                        objectName = inventoryFileReader.next(); 
+                    } 
+                    else if (inventoryFileReader.hasNextInt()){
+                        objectHealth = inventoryFileReader.nextInt(); 
+                    }
+
+                    switch (objectName) {
+                        case "Hammer":
+                            HammerObject hammer = new HammerObject(objectHealth, objectName); 
+                            player.addItem(hammer);
+                            break;
+                        default:
+                            throw new AssertionError();
+                    }
+                }
+                inventoryFileReader.close();
                 isInputted = true; 
                 checkLevelNum(player);
             } catch (FileNotFoundException e){
                 System.out.println("File not found, please try again"); 
                 startGame(true, 0);
             }
-            
         } 
         // Covers any misinputs and re-loops the method // 
         else {
@@ -231,7 +255,8 @@ public class RPG {
             inventoryData.put(temp, player.getInventoryData().get(i).getObjectIntegrity());
             saveInventory.write(temp); 
             saveInventory.write(",");
-            saveInventory.write(inventoryData.get(temp));
+            // Work on tomorrow //
+            // saveInventory.write(inventoryData.get(temp));
         } 
         saveData.write(player.getSaveData());
         saveData.close(); 
