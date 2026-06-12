@@ -185,6 +185,7 @@ public class RPG {
         Scanner input = new Scanner(System.in);
         boolean isInputted = false;
         int userOption;  
+        // Checks the user's last selected option from the player class, then sets the userOption to that choice // 
         switch (player.getLastUserSelection()) {
             case -1:
                 userOption = 1; 
@@ -196,29 +197,28 @@ public class RPG {
                 userOption = 3; 
                 break; 
             default:
+                // If the user hasn't selected an option yet, this allows them to do so // 
                 userOption = input.nextInt();
         }
+        // Checks the user's input, then executes the story function // 
+        // The while loop loops the switch if the user enters anything other than 1, 2, 3, or 4 //
         while (!isInputted) {  
             switch (userOption) {
                 case 1:
                     String print1 = "Exploring your surroundings, you find things scattered all over the floor. One of these things is a hammer, so you pick it up.\n"; 
-                    // adds item to inventory // 
                     printText(print1, player);
+                    // The if loop prevents the item from being duplicated in the player's inventory // 
                     if (player.getLastUserSelection() == 0) {
                         HammerObject hammer = new HammerObject(100, "Hammer"); 
                         player.addItem(hammer);
                         printText("Hammer added to your inventory", player); 
-                        try {
-                            player.setLastUserSelection(-1);
-                            saveGame(player, "a");
-                        } catch (IOException e) {
-                            System.out.println("An error has occurred. Your game has not been saved.");
-                        }
+                        player.setLastUserSelection(-1);
                     } 
                     else {
                         printText("Hammer already in your inventory", player);
                     }
-                    System.out.println("Autosaved!");
+                    printText("Player HP:" + player.getHealthPoints() + "\n", player);
+                    printText("Inventory: " , player); 
                     isInputted = true;
                     break;
                 case 2: 
@@ -245,6 +245,10 @@ public class RPG {
                     break; 
             } 
         }
+    }
+
+    public static void story2(){
+
     }
 
     public static void endGame(PlayerClass player){
@@ -280,11 +284,14 @@ public class RPG {
 
     public static void saveGame(PlayerClass player, String userInput) throws IOException{
         Scanner input = new Scanner(System.in);
+        // Creates fileWriters to write all the save data to their respective files //
         FileWriter saveData = new FileWriter(saveFile); 
         FileWriter saveInventory = new FileWriter(inventoryFile); 
         LinkedHashMap<String, Integer> inventoryData = new LinkedHashMap<>(); 
         for (int i = 0; i < player.getInventoryData().size(); i++) {
+            // This string of functions gets the name of the object // 
             String temp = player.getInventoryData().get(i).getObjectName();
+            // This function adds the object name as a string and the object integrity as a int // 
             inventoryData.put(temp, player.getInventoryData().get(i).getObjectIntegrity());
             saveInventory.write(temp); 
             saveInventory.write(",");
@@ -293,6 +300,7 @@ public class RPG {
         saveData.write(player.getSaveData());
         saveData.close(); 
         saveInventory.close();
+        // If loop is used for autosave feature, may or may not be used in the final game // 
         if (userInput.isEmpty()){
             printText("Save Complete! Continue playing or quit? (a/b)", player);
             userInput = input.next(); 
