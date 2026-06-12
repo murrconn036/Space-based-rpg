@@ -31,3 +31,17 @@ It features 3 classes, a playerClass, a ObjectClass, and a HammerClass. The hamm
 | getSaveData() | formats all of the classes fields into a string, then returns that string | 
 | getInventoryData() | returns the inventory of the player, as an arrayList | 
 
+## objectClass methods: 
+|     Function      | Function Purpose | 
+| ---------------   | ---------------- | 
+| objectClass(int objectIntegrity, String objectName) | Constructor for multi-use objects | 
+| objectClass(String objectName) | Constructor for single-use objects |
+| damageItem() | Randomly damages the object when it's used (for multi-use objects) | 
+| getObjectIntegrity() | Returns the current integrity of the object (for multi-use objects)| 
+| getObjectName() | Returns the name of the object | 
+
+## HammerObject methods: 
+|     Function      | Function Purpose | 
+| ---------------   | ---------------- |
+|   Constructor     | creates a hammer object, and inherits all of the objectClass methods | 
+| damageItem(int amount) | was meant to be override the objectClass method, but polymorphisim is weird, so it subtracts the amount of health points submitted | 
