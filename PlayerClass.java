@@ -25,7 +25,7 @@ public class PlayerClass {
     } 
 
     public int getLastUserSelection(){
-        return lastUserSelection; 
+        return this.lastUserSelection; 
     }
 
     public void setLevelNum(int levelNum){
