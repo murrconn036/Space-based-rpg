@@ -46,6 +46,8 @@ public class RPG {
                     if (option.equalsIgnoreCase("y")) {
                         saveFile.delete(); 
                         saveFile.createNewFile(); 
+                        inventoryFile.delete(); 
+                        inventoryFile.createNewFile(); 
                         isInputted2 = true; 
                     }
                     // If no, calls the method again // 
@@ -86,7 +88,7 @@ public class RPG {
                     if (saveFileReader.hasNextDouble()){
                         playerHealth = saveFileReader.nextDouble();
                     }
-                    if (saveFileReader.hasNextInt() && saveFileReader.nextInt() > 0){
+                    if (saveFileReader.hasNextInt() && saveFileReader.nextInt() >= 0){
                         levelNum = saveFileReader.nextInt();
                     } 
                     else {
@@ -142,7 +144,7 @@ public class RPG {
             System.out.println("Could not clear terminal");
         }
         // Prints the opening story and options for the user to select, also incrementing the level counter //
-        player.setLevelNum(0);
+        player.setLevelNum(1);
         String print = "You awake in a strange room, alone and surrounded by flashing red lights. An automated voice repeats “SYSTEM FAILURE. LOSS OF CREW DETECTED.” Then, the lights go out, and the room turns black. You awake again, this time in a room with white, fluorescent lights, and a constant background hum. You slowly rise to your feet, a wave of dizziness striking your head. You have no memory of the past, and have no clue where you are. As you begin to explore your surroundings, you find the bodies of your crew laying on the floor. They have facial expressions of horror, but no scratches or marks on their bodies. You then find a window, and realize that you are not on Earth.\n"; 
         printText(print, player);
         String print2 = "Select an option:\n"; 
@@ -200,8 +202,8 @@ public class RPG {
                 // If the user hasn't selected an option yet, this allows them to do so // 
                 userOption = input.nextInt();
         }
-        // Checks the user's input, then executes the story function // 
-        // The while loop loops the switch if the user enters anything other than 1, 2, 3, or 4 //
+        /*  Checks the user's input, then executes the story function  
+            The while loop loops the switch if the user enters anything other than 1, 2, 3, or 4 */
         while (!isInputted) {  
             switch (userOption) {
                 case 1:
@@ -211,14 +213,19 @@ public class RPG {
                     if (player.getLastUserSelection() == 0) {
                         HammerObject hammer = new HammerObject(100, "Hammer"); 
                         player.addItem(hammer);
-                        printText("Hammer added to your inventory", player); 
+                        printText("Hammer added to your inventory\n", player); 
                         player.setLastUserSelection(-1);
                     } 
                     else {
                         printText("Hammer already in your inventory", player);
                     }
-                    printText("Player HP:" + player.getHealthPoints() + "\n", player);
-                    printText("Inventory: " , player); 
+                    printText("Player HP: " + player.getHealthPoints() + "\n", player); 
+                    System.out.format("%1s%25s", "Item", "Integrity\n");
+                    for (int i = 0; i < player.getInventoryData().size(); i++) {
+                        printText(player.getInventoryData().get(i).getObjectName() + "             " + player.getInventoryData().get(i).getObjectIntegrity() + "\n", player); 
+                    }
+                    player.setLevelNum(2);
+                    checkLevelNum(player); 
                     isInputted = true;
                     break;
                 case 2: 
@@ -230,6 +237,8 @@ public class RPG {
                     break; 
                 case 3: 
                     player.setLastUserSelection(-3);
+                    player.setLevelNum(2); 
+                    checkLevelNum(player); 
                     isInputted = true; 
                     break; 
                 case 4: 
@@ -247,8 +256,87 @@ public class RPG {
         }
     }
 
-    public static void story2(){
+    public static void story2(PlayerClass player){
+        player.setLastUserSelection(0);
+            printText("Moving to the next room, you find a hole in the wall. Air is leaking out from the room, so you have to think quick.  You have 3 options to fix it.\n", player);
+            printText("1. Grab a piece of wood and nails to fix it (Hammer required)\n", player);
+            printText("2. Patch the hole with fabric and glue\n", player);
+            printText("3. Leave the hole alone and move to the next room\n", player);
+            printText("4. Save your game\n", player);
 
+        Scanner input = new Scanner(System.in);
+        boolean isInputted = false;
+        int userOption;  
+        // Checks the user's last selected option from the player class, then sets the userOption to that choice // 
+        switch (player.getLastUserSelection()) {
+            case -1:
+                userOption = 1; 
+                break;
+            case -2: 
+                userOption = 2;
+                break;  
+            case -3: 
+                userOption = 3; 
+                break; 
+            default:
+                // If the user hasn't selected an option yet, this allows them to do so // 
+                userOption = input.nextInt();
+        }
+        
+        do {
+            switch (userOption) {
+                case 1:
+                    if (player.getInventoryData().isEmpty()) {
+                        printText("You do not have a hammer. Choose another option\n", player); 
+                        userOption = input.nextInt();
+                        break;
+                    } 
+                    else {
+                        printText("The board holds, and the air stops escaping." + player.getPlayerName() + "'s hammer loses 20 HP\n", player);
+                        player.getInventoryData().get(0).damageItem();
+                        printText("Player HP: " + player.getHealthPoints() + "\n", player); 
+                        System.out.format("%1s%25s", "Item", "Integrity\n");
+                        for (int i = 0; i < player.getInventoryData().size(); i++) {
+                            printText(player.getInventoryData().get(i).getObjectName() + "             " + player.getInventoryData().get(i).getObjectIntegrity() + "\n", player); 
+                        }
+                        isInputted = true; 
+                    }
+                    break;
+                case 2: 
+                    printText("The glue around the edge of the fabric doesn't hold, so air continues to leak out and you lose 50 HP\n", player);
+                    player.setHealthPoints(50);
+                    printText("Player HP: " + player.getHealthPoints() + "\n", player); 
+                        System.out.format("%1s%25s", "Item", "Integrity\n");
+                        for (int i = 0; i < player.getInventoryData().size(); i++) {
+                            printText(player.getInventoryData().get(i).getObjectName() + "             " + player.getInventoryData().get(i).getObjectIntegrity(), player); 
+                        }
+                        isInputted = true; 
+                    break; 
+                case 3: 
+                    printText("You move fast enough to the next room to avoid serious damage, but you still lose 25HP\n", player); 
+                    player.setHealthPoints(player.getHealthPoints() - 25);
+                    printText("Player HP: " + player.getHealthPoints() + "\n", player); 
+                        System.out.format("%1s%25s", "Item", "Integrity\n");
+                        for (int i = 0; i < player.getInventoryData().size(); i++) {
+                            printText(player.getInventoryData().get(i).getObjectName() + "             " + player.getInventoryData().get(i).getObjectIntegrity(), player); 
+                        }
+                        isInputted = true; 
+                    break; 
+                case 4: 
+                    try {
+                        saveGame(player, "");
+                    } catch (IOException e) {
+                        System.out.println("An error has occurred");
+                    }
+                    isInputted = true;
+                    break;
+                default:
+                    System.out.println("Please select a number between 1-4");
+                    break; 
+            }
+        } while (!isInputted); 
+    
+    
     }
 
     public static void endGame(PlayerClass player){
@@ -317,11 +405,11 @@ public class RPG {
 
     public static void checkLevelNum(PlayerClass player){
         switch (player.getLevelNum()) {
-            case 0:
+            case 1:
                 Introduction(player); 
                 break;
-            case 1: 
-                
+            case 2: 
+                story2(player); 
                 break; 
         }
     }

@@ -13,6 +13,9 @@ public class PlayerClass {
         this.lastUserSelection = lastUserSelection; 
     }
 
+    public String getPlayerName(){
+        return this.playerName; 
+    }
     public double getHealthPoints(){
         return this.healthPoints; 
     } 
@@ -40,12 +43,12 @@ public class PlayerClass {
     public void addItem(ObjectClass item){
         inventory.add(item);
     }
-
+    // Formats the save data in a string seperated by commas then returns that string //
     public String getSaveData(){
         String saveData = this.playerName + "," + this.healthPoints + "," + this.levelNumber + "," + this.lastUserSelection; 
         return saveData; 
     }
-
+    
     public ArrayList<ObjectClass> getInventoryData(){
         return this.inventory; 
     }
