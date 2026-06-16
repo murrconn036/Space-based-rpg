@@ -44,4 +44,4 @@ It features 3 classes, a playerClass, a ObjectClass, and a HammerClass. The hamm
 |     Function      | Function Purpose | 
 | ---------------   | ---------------- |
 |   Constructor     | creates a hammer object, and inherits all of the objectClass methods | 
-| damageItem(int amount) | was meant to be override the objectClass method, but polymorphisim is weird, so it subtracts the amount of health points submitted | 
+| damageItem(int amount) | was meant to be overridden the objectClass method, but polymorphisim is weird, so it subtracts the amount of health points submitted | 
